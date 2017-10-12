@@ -135,7 +135,7 @@ function countdown(minutes) {
 		<div style="background:rgba(255,239,239,0.7);padding: 10px;color: rgba(255,58,45,1);word-wrap: break-word;">'.$result[0].'</div>
 		<p style="padding-top:20px; padding-bottom:0;text-align:center;"><strong>SCAN THIS QR FOR PAYMENT ADDRESS</strong></p>
 		<hr style="border-bottom:3px solid #000;margin:0;" /><br/>
-		<div id="qrcode" style="width:50%;margin:0 auto;"></div><script>new QRCode(document.getElementById("qrcode"), "'.$result[0].'");</script>
+		<div id="qrcode" style="width:50%;margin:0 auto;"></div><script>new QRCode(document.getElementById("qrcode"), JSON.stringify ( { "address" : "'.$result[0].'", "amount" : "'.$result[1].'", "tag" : "" } ) );</script>
 		'.( !empty( $custom_message ) ? '<p style="margin-top:10px;">'.$custom_message.'</p>' : '' ).'
 		</div>
 		<hr/ style="border-top:2px solid #000;">
