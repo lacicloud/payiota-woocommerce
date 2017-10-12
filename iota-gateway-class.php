@@ -16,7 +16,7 @@ class cwoa_AuthorizeNet_AIM extends WC_Payment_Gateway {
 		$this->method_description = __( "Iota Payment Gateway Plug-in for WooCommerce <br/><br/> <strong>IPN URL:</strong> ".plugins_url( 'ipn.php', __FILE__ ), 'cwoa-authorizenet-aim' );
 
 		// vertical tab title
-		$this->title = __( "Iota Tipping", 'cwoa-authorizenet-aim' );
+		$this->title = __( "IOTA Payment Gateway", 'cwoa-authorizenet-aim' );
 
 
 		$this->icon = null;
