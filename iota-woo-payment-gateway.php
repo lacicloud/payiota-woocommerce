@@ -1,7 +1,7 @@
 <?php
 /* 
 Plugin Name: IOTA Payment Gateway
-Plugin URI: http://ajvortex.com
+Plugin URI: https://payiota.me
 Description: IOTA Payment Gateway Extension For WooCommerce. Simple but flexible.
 Version: 1.0.0 
 Author: Junaid Rajpoot
