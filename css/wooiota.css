@@ -2,6 +2,10 @@
 	width: 50%;
 }
 
+#payment .payment_methods li img {
+		float: none !important;
+		max-height: none !important;
+}
 
 #add_payment_method #payment ul.payment_methods, .woocommerce-cart #payment ul.payment_methods, .woocommerce-checkout #payment ul.payment_methods {
     text-align: left;
