@@ -19,6 +19,12 @@ You must have a PayIOTA.me account to set-up the plugin.
 3. Configure it under Plugins->IOTA Payment Gateway->Settings, set API key and Verification key
 4. Test it!
 
+== Compatibility ==
+
+WordFence: The IPN triggers a rule in WordFence. You must whitelist PayIOTA.me (either IPV4 + IPV6 or domain) in WordFence. If you can remove the 'POST without User-Agent/Referer' that works too.
+
+You should probably do the same for other security plugins as well. At this time, I do not know of any plugins that are not fully compatible with PayIOTA other than WordFence.
+
 == Frequently Asked Questions ==
 
 None as of yet.
