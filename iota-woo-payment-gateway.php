@@ -60,6 +60,15 @@ add_action( 'woocommerce_thankyou', 'bbloomer_add_content_thankyou' );
 function bbloomer_add_content_thankyou($order_id) {
 	
 	if ( ! class_exists( 'WC_Payment_Gateway' ) ) return;
+
+	 //don't show payment box if a different gateway is selected
+	 global $woocommerce;
+	 $chosen_gateway = $woocommerce->session->chosen_payment_method;
+	 if ($chosen_gateway !== "cwoa_authorizenet_aim") {
+			return;
+	 }
+	
+	
 	include_once( 'iota_class.php' );
 	
 	$iota_obj = new Iota_Class();

@@ -25,10 +25,10 @@ if (isset($_POST["address"])) {
 	
 	if( $paid_iota >= $price_iota ){
 	
-		$order->update_status('completed');
-		update_option("woo_iota_order_status_".$order_id, "completed");
+		$order->update_status('processing');
+		update_option("woo_iota_order_status_".$order_id, "processing");
 		
-		echo "Order Completed.";
+		echo "Order set to Processing.";
 		
 	}else{
 		echo "Paid Iota Amount is less than Price Amount Iota.";
