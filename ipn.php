@@ -1,5 +1,4 @@
 <?php
-
 include("../../../wp-config.php");
 
 if (isset($_POST["address"])) {

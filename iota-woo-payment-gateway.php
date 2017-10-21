@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /* 
 Plugin Name: IOTA Payment Gateway
 Plugin URI: https://payiota.me
@@ -165,6 +166,7 @@ function payiota_invoice($data){
 		"price" => $data['price'],
 		"custom" => $data['order_id'],
 		"action" => "new",
+		"ipn_url" => plugins_url( 'ipn.php', __FILE__ ),
 		"currency" => $data['currency']
 	);
 

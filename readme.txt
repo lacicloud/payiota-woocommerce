@@ -16,7 +16,7 @@ You must have a PayIOTA.me account to set-up the plugin.
 
 1. Install the plugin by uploading the ZIP file or by using the WordPress plugin installer
 2. Activate it
-3. Configure it under Plugins->IOTA Payment Gateway->Settings, set API key and Verification key
+3. Configure it under Plugins->IOTA Payment Gateway->Settings, set API key and Verification key. As of v1.0.5 , you are not required to set your IPN URL in the PayIOTA interface page to the same URL that you see on the settings page - custom IPN URL's are now supported by PayIOTA.
 4. Test it!
 
 == Compatibility ==
@@ -27,4 +27,5 @@ You should probably do the same for other security plugins as well. At this time
 
 == Frequently Asked Questions ==
 
-None as of yet.
+Q: What is the maximum amount of time an invoice lasts?
+A: 1 week. After that our service will not check the address anymore to prevent overloading our server and the node it is checking from. 
