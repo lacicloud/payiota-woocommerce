@@ -161,28 +161,31 @@ function countdown(minutes) {
 
 
 function payiota_invoice($data){
-	$request = array(
-		"api_key" => $data['api_key'],
-		"price" => $data['price'],
-		"custom" => $data['order_id'],
-		"action" => "new",
-		"ipn_url" => plugins_url( 'ipn.php', __FILE__ ),
-		"currency" => $data['currency']
+	$postdata = http_build_query(
+	    array(
+	        "api_key" => $data['api_key'],
+			"price" => $data['price'],
+			"custom" => $data['order_id'],
+			"action" => "new",
+			"ipn_url" => plugins_url( 'ipn.php', __FILE__ ),
+			"currency" => $data['currency']
+	    )
 	);
 
-	$curl = curl_init();
-	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+	$opts = array('http' =>
+	    array(
+	        'method'  => 'POST',
+	        'header'  => 'Content-type: application/x-www-form-urlencoded',
+	        'content' => $postdata
+	    )
+	);
 
-	$request = http_build_query($request);
+	$context  = stream_context_create($opts);
+	$response = file_get_contents('https://payiota.me/api.php', false, $context);
 
-	curl_setopt($curl,CURLOPT_POST, 1);
-	curl_setopt($curl,CURLOPT_POSTFIELDS, $request);
 
-	curl_setopt($curl, CURLOPT_URL, 'https://payiota.me/api.php');
-	$response = curl_exec($curl);
-
-	$response = json_decode($response, true);
-
+	$response = json_decode($result, true);
 	return $response;
 }
+
 ?>
