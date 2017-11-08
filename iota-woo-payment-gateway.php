@@ -182,9 +182,18 @@ function payiota_invoice($data){
 
 	$context  = stream_context_create($opts);
 	$response = file_get_contents('https://payiota.me/api.php', false, $context);
+	
+	//cURL fallback
+	if (!$response) {
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl,CURLOPT_POST, 1);
+		curl_setopt($curl,CURLOPT_POSTFIELDS, $postdata);
+		curl_setopt($curl, CURLOPT_URL, 'https://payiota.me/api.php');
+		$response = curl_exec($curl);
+	}
 
-
-	$response = json_decode($result, true);
+	$response = json_decode($response, true);
 	return $response;
 }
 
