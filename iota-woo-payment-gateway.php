@@ -185,12 +185,23 @@ function payiota_invoice($data){
 	
 	//cURL fallback
 	if (!$response) {
+		
+		if(is_callable('curl_init') == false){
+			echo "ERROR: file_get_contents failed and cURL is not installed";
+			die(1);
+		}
+
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl,CURLOPT_POST, 1);
 		curl_setopt($curl,CURLOPT_POSTFIELDS, $postdata);
 		curl_setopt($curl, CURLOPT_URL, 'https://payiota.me/api.php');
 		$response = curl_exec($curl);
+		
+		if (!$response) {
+			echo "ERROR: file_get_contents and cURL failed";
+			die(1);
+		}
 	}
 
 	$response = json_decode($response, true);
