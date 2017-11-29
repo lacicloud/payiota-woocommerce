@@ -1,5 +1,4 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit;
 
 class Iota_Class extends WC_Payment_Gateway {
 	
@@ -16,7 +15,7 @@ class Iota_Class extends WC_Payment_Gateway {
 		
 		$this->verification_key = $this->get_option( 'veri_key' );
 		
-		$this->currency = $this->get_option( 'currency' );
+		//$this->currency = $this->get_option( 'currency' );
 		
 		$this->title = $this->get_option( 'title' );
 		

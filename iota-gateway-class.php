@@ -13,10 +13,10 @@ class cwoa_AuthorizeNet_AIM extends WC_Payment_Gateway {
 		$this->method_title = __( "IOTA Payment Gateway", 'cwoa-authorizenet-aim' );
 
 		// Show Description
-		$this->method_description = __( "Iota Payment Gateway Plug-in for WooCommerce <br/><br/> <strong>IPN URL:</strong> ".plugins_url( 'ipn.php', __FILE__ ), 'cwoa-authorizenet-aim' );
+		$this->method_description = __( "IOTA Payment Gateway Plug-in Pro for WooCommerce <br/><br/> <strong>IPN URL:</strong> ".plugins_url( 'ipn.php', __FILE__ ), 'cwoa-authorizenet-aim' );
 
 		// vertical tab title
-		$this->title = __( "IOTA Payment Gateway", 'cwoa-authorizenet-aim' );
+		$this->title = __( "Iota Payment Gateway", 'cwoa-authorizenet-aim' );
 
 
 		$this->icon = null;
@@ -104,7 +104,7 @@ class cwoa_AuthorizeNet_AIM extends WC_Payment_Gateway {
 
 		$customer_order = new WC_Order( $order_id );
 		
-		$customer_order->add_order_note( __( 'Iota Order Processed.', 'cwoa-authorizenet-aim' ) );
+		$customer_order->add_order_note( __( 'Awaiting IOTA payment. Order status changed to pending payment.', 'cwoa-authorizenet-aim' ) );
 
 		// paid order marked
 		//$customer_order->payment_complete();

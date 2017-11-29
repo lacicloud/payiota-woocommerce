@@ -1,15 +1,14 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit;
 /* 
-Plugin Name: IOTA Payment Gateway
-Plugin URI: https://payiota.me
-Description: IOTA Payment Gateway Extension For WooCommerce. Simple but flexible.
-Version: 1.0.0 
-Author: Junaid Rajpoot
-Author URI: http://ajvortex.com
+Plugin Name: IOTA Payment Gateway Pro
+Plugin URI: http://cryptostore.trade
+Description: IOTA Payment Gateway Extension For WooCommerce Pro Version. Simple but flexible.
+Version: 1.0.3
+Author: Dan Darden
+Author URI: http://cryptostore.trade
 */ 
 
-/*  Copyright 2017 Junaid Rajpoot (email: junaidfx@gmail.com)
+/*  Copyright 2017 Dan Darden (email: satoshin@protonmail.ch)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -61,14 +60,14 @@ add_action( 'woocommerce_thankyou', 'bbloomer_add_content_thankyou' );
 function bbloomer_add_content_thankyou($order_id) {
 	
 	if ( ! class_exists( 'WC_Payment_Gateway' ) ) return;
-
+	
+	
 	 //don't show payment box if a different gateway is selected
 	 global $woocommerce;
 	 $chosen_gateway = $woocommerce->session->chosen_payment_method;
 	 if ($chosen_gateway !== "cwoa_authorizenet_aim") {
 			return;
 	 }
-	
 	
 	include_once( 'iota_class.php' );
 	
@@ -92,13 +91,21 @@ function bbloomer_add_content_thankyou($order_id) {
 
 		$i_address = get_option( 'invoice_address_'.$order_id );
 		$i_price = get_option( 'invoice_payment_'.$order_id );
-
+		$order_status = get_option( 'woo_iota_order_status_'.$order_id );
+		$currency_code = get_option('woocommerce_currency');
+		$total_bill = $customer_order->order_total;
+		
+		if( $currency_code == "MIOTA" ){
+			$currency_code = "IOTA";
+			$total_bill *= 1000000;
+		}
+		
 		if( empty( $i_price ) && empty( $i_address ) ){
 
 			$data = array(
 				"api_key" => $api_key,
-				"price"   => $customer_order->order_total,
-				"currency" => !empty( $currency ) ? $currency : "USD",
+				"price"   => $total_bill,
+				"currency" => $currency_code,
 				"order_id" => $customer_order->get_order_number()
 			);
 
@@ -110,33 +117,86 @@ function bbloomer_add_content_thankyou($order_id) {
 			$result[] = $i_address;
 			$result[] = $i_price;
 		}
+		
+		echo "<script>";
+		echo "var ajax_request_url = '" . admin_url('admin-ajax.php') . "'";
+		echo "</script>";
 
 		echo  '<script>var timeoutHandle;
-function countdown(minutes) {
-    var seconds = 60;
-    var mins = minutes
-    function tick() {
-        var counter = document.getElementById("woo_timer");
-        var current_minutes = mins-1
-        seconds--;
-        counter.innerHTML =
-        current_minutes.toString() + ":" + (seconds < 10 ? "0" : "") + String(seconds);
-        if( seconds > 0 ) {
-            timeoutHandle=setTimeout(tick, 1000);
-        } else {
+		function countdown(minutes) {
+			var seconds = 60;
+			var mins = minutes
+			function tick() {
+				var counter = document.getElementById("woo_timer");
+				var current_minutes = mins-1
+				seconds--;
+				counter.innerHTML =
+				current_minutes.toString() + ":" + (seconds < 10 ? "0" : "") + String(seconds);
+				if( seconds > 0 ) {
+					timeoutHandle=setTimeout(tick, 1000);
+				} else {
 
-            if(mins > 1){
+					if(mins > 1){
 
-               setTimeout(function () { countdown(mins - 1); }, 1000);
+					   setTimeout(function () { countdown(mins - 1); }, 1000);
 
-            }
-        }
-    }
-    tick();
-}</script>';
+					}
+				}
+				
+				if( current_minutes <= 0 && seconds <= 0 ){
+					//alert( "time is up!" );
+					cancel_order();
+				}
+			}
+			tick();
+		}
 		
-		echo '<div id="payment" class="woocommerce-checkout-payment wooiota_main">
-			<ul class="wc_payment_methods payment_methods methods" style="border-bottom:none;">
+		
+		function cancel_order(){
+			jQuery.ajax({
+				type : "POST",
+				url: ajax_request_url,
+				data: "action=iota_cancel_order&order_id="+jQuery("#order_id").val(),
+				success: function(resp){
+					
+				}
+			});
+		}
+		
+
+		function check_payment_status(){
+			jQuery.ajax({
+				type : "POST",
+				url: ajax_request_url,
+				data: "action=check_payment_status&order_id="+jQuery("#order_id").val(),
+				success: function(resp){
+					if( jQuery.trim(resp) == "pending" ){
+					
+					}else if( jQuery.trim(resp) == "cancelled" || jQuery.trim(resp) == "completed" ){
+						window.location = window.location.href;
+					}
+				}
+			});
+		}
+		</script>';
+		
+		//echo $currency_code;
+		
+		echo '<input type="hidden" name="order_id" id="order_id" value="'.$order_id.'" />';
+		
+		echo '<div id="payment" class="woocommerce-checkout-payment wooiota_main">';
+		
+		if( !empty($order_status) && $order_status == "cancelled" ){
+			echo '<div style="width:100%;padding:10px;background-color:rgba(255,58,45,1);color:#FFF;">IOTA payment Timed Out. Order status changed from Pending payment to Cancelled.</div>';
+		}
+		
+		if( !empty($order_status) && $order_status == "completed" ){
+			echo '<div style="width:100%;padding:10px;background-color:green;color:#FFF;">IOTA payment Complete. Order status changed from Pending payment to Completed.</div>';
+		}
+		
+		
+		if( $order_status != "cancelled" && $order_status != "completed" ){
+		echo '<ul class="wc_payment_methods payment_methods methods" style="border-bottom:none;">
 			<li class="wc_payment_method payment_method_cwoa_authorizenet_aim">
 
 			<label for="payment_method_cwoa_authorizenet_aim">'.$title.'</label>
@@ -148,16 +208,26 @@ function countdown(minutes) {
 		<div id="qrcode" style="width:50%;margin:0 auto;"></div><script>new QRCode(document.getElementById("qrcode"), JSON.stringify ( { "address" : "'.$result[0].'", "amount" : "'.$result[1].'", "tag" : "" } ) );</script>
 		'.( !empty( $custom_message ) ? '<p style="margin-top:10px;">'.$custom_message.'</p>' : '' ).'
 		</div>
-		<hr/ style="border-top:2px solid #000;">
-		'.( ( !empty( $timeout_after ) && $timeout_after != 0 ) ? '<p style="text-align:center;"><strong>Time Remaining: <span id="woo_timer"></span></strong></p><script>countdown('.$timeout_after.');</script>' : '' ).'
-	</li>
-		</ul></div>';
+		<hr/ style="border-top:2px solid #000;">';
+		
+		
+			echo '<script>setInterval(check_payment_status,1000*2)</script>';
+			if( !empty( $timeout_after ) && $timeout_after != 0  ){
+				echo '<p style="text-align:center;"><strong>Time Remaining: <span id="woo_timer"></span></strong></p><script>countdown('.$timeout_after.');</script>';
+			}
+			
+			echo '</li></ul>';
+		}
+		
+	echo '</div>';
+		
 		
 
 	}else{
-		echo "<br/><strong>It seems the admin has not set a PayIOTA.me API key yet!</strong><br/>";
+		echo "<br/><strong>It Seems Admin Did Not Set The Payiot.me API Key Yet.</strong><br/>";
 	}
 }
+
 
 
 function payiota_invoice($data){
@@ -206,6 +276,49 @@ function payiota_invoice($data){
 
 	$response = json_decode($response, true);
 	return $response;
+}
+
+function check_payment_status(){
+	//print_r($_POST);
+	$order = new WC_Order( $_POST['order_id'] );
+	echo $order->get_status();
+	exit;
+}
+
+
+add_action('wp_ajax_nopriv_check_payment_status', 'check_payment_status');
+add_action('wp_ajax_check_payment_status', 'check_payment_status');
+
+
+function iota_cancel_order(){
+	$order = new WC_Order( $_POST['order_id'] );
+	$order->update_status('cancelled');
+	update_option("woo_iota_order_status_".$_POST['order_id'], "cancelled");
+	$order->add_order_note( __( 'IOTA payment Timed Out. Order status changed from Pending payment to Cancelled.', 'cwoa-authorizenet-aim' ) );
+	echo "Order Cancelled.";
+	exit;
+}
+add_action('wp_ajax_nopriv_iota_cancel_order', 'iota_cancel_order');
+add_action('wp_ajax_iota_cancel_order', 'iota_cancel_order');
+
+
+
+add_filter( 'woocommerce_currencies', 'aj_add_my_currency' );
+
+function aj_add_my_currency( $currencies ) {
+     $currencies['MIOTA'] = __( 'Mega IOTA', 'woocommerce' );
+	$currencies['IOTA'] = __( 'IOTA', 'woocommerce' );
+     return $currencies;
+}
+
+add_filter('woocommerce_currency_symbol', 'aj_add_my_currency_symbol', 10, 2);
+
+function aj_add_my_currency_symbol( $currency_symbol, $currency ) {
+     switch( $currency ) {
+          case 'MIOTA': $currency_symbol = 'Mi'; break;
+		  case 'IOTA': $currency_symbol = 'IOTA'; break;
+     }
+     return $currency_symbol;
 }
 
 ?>

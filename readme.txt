@@ -1,6 +1,6 @@
 === PayIOTA.me WooCommerce Plugin ===
 
-Contributors: lacicloud
+Contributors: lacicloud, Dan Darden
 Donate link: https://payiota.me/humans.txt
 Tags: iota, payment, pay, gateway
 Tested on: WordPress 4.8.3 and WooCommerce 3.2.0
