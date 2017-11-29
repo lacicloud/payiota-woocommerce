@@ -79,10 +79,10 @@ class cwoa_AuthorizeNet_AIM extends WC_Payment_Gateway {
 				'type'		=> 'text',
 				'desc_tip'	=> __( 'This is the Verificatino Key provided by payiota.me when you signed up for an account.', 'cwoa-authorizenet-aim' ),
 			),
-			'currency_code' => array(
+			'currency' => array(
 				'title'		=> __( '3 Letter Currency Code', 'cwoa-authorizenet-aim' ),
 				'type'		=> 'text',
-				'desc_tip'	=> __( 'This is the Verificatino Key provided by payiota.me when you signed up for an account.', 'cwoa-authorizenet-aim' ),
+				'desc_tip'	=> __( 'This can be any 3 letter currency code.', 'cwoa-authorizenet-aim' ),
 				'default'	=> __( 'USD', 'cwoa-authorizenet-aim' ),
 			),
 			'custom_message' => array(
