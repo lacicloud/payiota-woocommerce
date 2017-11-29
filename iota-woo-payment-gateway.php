@@ -3,9 +3,9 @@
 Plugin Name: IOTA Payment Gateway Pro
 Plugin URI: http://cryptostore.trade
 Description: IOTA Payment Gateway Extension For WooCommerce Pro Version. Simple but flexible.
-Version: 1.0.3
-Author: Dan Darden
-Author URI: http://cryptostore.trade
+Version: 1.0.1
+Author: Dan Darden & Laszlo Molnarfi
+Author URI: http://cryptostore.trade and https://lacicloud.net
 */ 
 
 /*  Copyright 2017 Dan Darden (email: satoshin@protonmail.ch)
