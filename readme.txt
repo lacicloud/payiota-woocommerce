@@ -29,3 +29,6 @@ You should probably do the same for other security plugins as well. At this time
 
 Q: What is the maximum amount of time an invoice lasts?
 A: 1 week. After that our service will not check the address anymore to prevent overloading our server and the node it is checking from. 
+
+Q: How can I use currency different than USD?
+A: Add the 3 letter currency code in the plugin's settings. Don't forget to also change your WooCommerce currency settings!
