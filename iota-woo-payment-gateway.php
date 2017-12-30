@@ -224,7 +224,7 @@ function bbloomer_add_content_thankyou($order_id) {
 		
 
 	}else{
-		echo "<br/><strong>It Seems Admin Did Not Set The Payiot.me API Key Yet.</strong><br/>";
+		echo "<br/><strong>Error! No API key is set for PayIOTA.</strong><br/>";
 	}
 }
 
