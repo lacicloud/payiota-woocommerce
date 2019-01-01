@@ -93,7 +93,7 @@ function bbloomer_add_content_thankyou($order_id) {
 		$i_price = get_option( 'invoice_payment_'.$order_id );
 		$order_status = get_option( 'woo_iota_order_status_'.$order_id );
 		$currency_code = get_option('woocommerce_currency');
-		$total_bill = $customer_order->get_order_total();
+		$total_bill = $customer_order->get_total();
 		
 		if( $currency_code == "MIOTA" ){
 			$currency_code = "IOTA";
