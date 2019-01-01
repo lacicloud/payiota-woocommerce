@@ -211,7 +211,7 @@ function bbloomer_add_content_thankyou($order_id) {
 		<hr/ style="border-top:2px solid #000;">';
 		
 		
-			echo '<script>setInterval(check_payment_status,1000*2)</script>';
+			echo '<script>setInterval(check_payment_status,1000*15)</script>';
 			if( !empty( $timeout_after ) && $timeout_after != 0  ){
 				echo '<p style="text-align:center;"><strong>Time Remaining: <span id="woo_timer"></span></strong></p><script>countdown('.$timeout_after.');</script>';
 			}
