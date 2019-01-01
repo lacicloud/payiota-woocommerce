@@ -16,6 +16,7 @@ if (isset($_POST["address"])) {
 	//for more variables see documentation
 
 	if ($verification !== $iota_obj->verification_key) {
+		echo "Verification key failed to match received verification key.";
 		die(1);
 	}
 
@@ -29,10 +30,12 @@ if (isset($_POST["address"])) {
 		update_option("woo_iota_order_status_".$order_id, "processing");
 		$order->add_order_note( __( 'IOTA payment Complete. Order status changed from Pending payment to Processing.', 'cwoa-authorizenet-aim' ) );
 		
-		echo "Order set to Processing.";
+		echo "Order set to processing.";
+		die(0);
 		
 	}else{
-		echo "Paid Iota Amount is less than Price Amount Iota.";
+		echo "Paid IOTA amount is less than price IOTA amount.";
+		die(1);
 	}
 
 }
