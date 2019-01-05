@@ -72,10 +72,8 @@ function payiota_add_content_thankyou($order_id) {
 	
 	$title = $iota_obj->title;	
 	$title  = !empty( $title ) ? $title : "IOTA";
-	
-	$custom_message = $iota_obj->custom_message;
-	
-	$timeout_after = $iota_obj->timeout_after;
+
+	$ipn_url = $iota_obj->ipn_url;
 	
 	$customer_order = new WC_Order( $order_id );
 
@@ -111,12 +109,19 @@ function payiota_add_content_thankyou($order_id) {
 		}
 				
 		echo '<div id="payment" class="woocommerce-checkout-payment">';
+
+		if (isset($_GET["payiota_status"]) and $_GET["payiota_status"] == "succcess" and $order_status != "processing") {
+			$ipn_broken = true;
+			echo '<script>alert("IPN is broken; PayIOTA.me received your order, but the payment data in this store could not be updated. Please contact this store\'s support, and this store please contact us at support@payiota.me!")</script>';
+		} else {
+			$ipn_broken = false;
+		}
 		
-		if( $order_status != "cancelled" && $order_status != "completed" ){
+		if( $order_status != "cancelled" && $order_status != "completed" && $order_status != "processing" and $ipn_broken == false){
 			echo $code = '<form id="payiotaform" action="https://payiota.me/external.php" method="GET">
 		<input type="hidden" name="address" value="'.$result[0].'">
 		<input type="hidden" name="price" value="'.$result[1].'">
-		<input type="hidden" name="success_url" value="'.$iota_obj->get_return_url( $customer_order ).'">
+		<input type="hidden" name="success_url" value="'.$iota_obj->get_return_url( $customer_order )."&payiota_status=succcess".'">
 		<input type="hidden" name="cancel_url" value="'.esc_url_raw($customer_order->get_cancel_order_url_raw()).'">
 		</form>';
 		echo "<script>document.getElementById('payiotaform').submit();</script>";

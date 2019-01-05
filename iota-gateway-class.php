@@ -3,6 +3,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class PayIOTA extends WC_Payment_Gateway {
 
+	var $ipn_url;
+
 	function __construct() {
 		
 		global $woocommerce;
@@ -10,11 +12,17 @@ class PayIOTA extends WC_Payment_Gateway {
 		// global ID
 		$this->id = "payiota";
 
+		//set IPN
+		$this->ipn_url   = add_query_arg( 'wc-api', 'PayIOTA', home_url( '/' ) );
+
+		//payment listener/hook
+		add_action( 'woocommerce_api_wc_gateway_payiota', array( $this, 'check_ipn_response' ) );
+
 		// Show Title
 		$this->method_title = __( "PayIOTA.me IOTA Payment Gateway", 'payiota' );
 
 		// Show Description
-		$this->method_description = __( "PayIOTA.me IOTA Payment Gateway Plugin for WooCommerce <br/><br/> <strong>IPN URL:</strong> ".plugins_url( 'ipn.php', __FILE__ ), 'payiota' );
+		$this->method_description = __( "PayIOTA.me IOTA Payment Gateway Plugin for WooCommerce <br/><br/> <strong>IPN URL:</strong> ".$this->ipn_url, 'payiota' );
 
 		// vertical tab title
 		$this->title = __( "PayIOTA.me IOTA Payment Gateway", 'payiota' );
@@ -26,7 +34,6 @@ class PayIOTA extends WC_Payment_Gateway {
 
 		// load time variable setting
 		$this->init_settings();
-		
 		
 		// Define user set variables
 		$default_title = $this->get_option( 'title' );
@@ -124,6 +131,41 @@ class PayIOTA extends WC_Payment_Gateway {
 				echo "<div class=\"error\"><p>". sprintf( __( "<strong>%s</strong> is enabled and WooCommerce is not forcing the SSL certificate on your checkout page. Please ensure that you have a valid SSL certificate and that you are <a href=\"%s\">forcing the checkout pages to be secured.</a>" ), $this->method_title, admin_url( 'admin.php?page=wc-settings&tab=checkout' ) ) ."</p></div>";	
 			}
 		}		
+	}
+
+	function check_ipn_response() {
+		include_once( 'iota_class.php' );
+		$iota_obj = new Iota_Class();
+		
+		$address = $_POST["address"];
+		$order_id = $_POST["custom"];
+		$verification = $_POST["verification"];
+		$paid_iota = $_POST["paid_iota"];
+		$price_iota = $_POST["price_iota"];
+		//for more variables see documentation
+
+		if ($verification !== $iota_obj->verification_key) {
+			echo "Verification key failed to match received verification key.";
+			die(1);
+		}
+
+		$order = new WC_Order( $order_id );
+		
+		if( $paid_iota >= $price_iota ){
+
+			update_option("woo_iota_order_status_".$order_id, "processing");
+			$order->update_status('processing');
+			$order->add_order_note( __( 'IOTA payment Complete. Order status changed from Pending payment to Processing.', 'payiota' ) );
+			$order->save();
+			
+			echo "Order ".$order_id." set to processing.";
+			die(0);
+			
+		}else{
+			echo "Paid IOTA amount is less than price IOTA amount.";
+			die(1);
+		}
+
 	}
 
 }

@@ -23,14 +23,17 @@ if (isset($_POST["address"])) {
 	global $woocommerce;
 
 	$order = new WC_Order( $order_id );
+
+	var_dump($order);
 	
 	if( $paid_iota >= $price_iota ){
-	
-		$order->update_status('processing');
-		update_option("woo_iota_order_status_".$order_id, "processing");
+
+		var_dump(update_option("woo_iota_order_status_".$order_id, "processing"));
+		var_dump($order->update_status('processing'));
 		$order->add_order_note( __( 'IOTA payment Complete. Order status changed from Pending payment to Processing.', 'payiota' ) );
+		$order->save();
 		
-		echo "Order set to processing.";
+		echo "Order ".$order_id." set to processing.";
 		die(0);
 		
 	}else{
