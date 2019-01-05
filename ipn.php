@@ -28,7 +28,7 @@ if (isset($_POST["address"])) {
 	
 		$order->update_status('processing');
 		update_option("woo_iota_order_status_".$order_id, "processing");
-		$order->add_order_note( __( 'IOTA payment Complete. Order status changed from Pending payment to Processing.', 'cwoa-authorizenet-aim' ) );
+		$order->add_order_note( __( 'IOTA payment Complete. Order status changed from Pending payment to Processing.', 'payiota' ) );
 		
 		echo "Order set to processing.";
 		die(0);

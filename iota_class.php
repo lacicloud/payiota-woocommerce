@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class Iota_Class extends WC_Payment_Gateway {
 	

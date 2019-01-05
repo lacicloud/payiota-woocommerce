@@ -1,4 +1,6 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 /* 
 Plugin Name: IOTA Payment Gateway Pro
 Plugin URI: http://cryptostore.trade
@@ -23,7 +25,6 @@ Author URI: http://cryptostore.trade and https://lacicloud.net
     You should have received a copy of the GNU General Public License
     along with this program; If not, see <http://www.gnu.org/licenses/>
 */
-
 
 add_action( 'plugins_loaded', 'payiota_init', 0 );
 
@@ -109,13 +110,13 @@ function payiota_add_content_thankyou($order_id) {
 			$result[] = $i_price;
 		}
 				
-		echo '<div id="payment" class="woocommerce-checkout-payment wooiota_main">';
+		echo '<div id="payment" class="woocommerce-checkout-payment">';
 		
 		if( $order_status != "cancelled" && $order_status != "completed" ){
 			echo $code = '<form id="payiotaform" action="https://payiota.me/external.php" method="GET">
 		<input type="hidden" name="address" value="'.$result[0].'">
 		<input type="hidden" name="price" value="'.$result[1].'">
-		<input type="hidden" name="success_url" value="'.$iota_obj->get_return_url( $customer_order ).'/clientarea.php?action=invoices">
+		<input type="hidden" name="success_url" value="'.$iota_obj->get_return_url( $customer_order ).'">
 		<input type="hidden" name="cancel_url" value="'.esc_url_raw($customer_order->get_cancel_order_url_raw()).'">
 		</form>';
 		echo "<script>document.getElementById('payiotaform').submit();</script>";
@@ -134,48 +135,28 @@ function payiota_add_content_thankyou($order_id) {
 
 
 function payiota_invoice($data){
-	$postdata = http_build_query(
-	    array(
+
+	$body = array(
 	        "api_key" => $data['api_key'],
 			"price" => $data['price'],
 			"custom" => $data['order_id'],
 			"action" => "new",
 			"ipn_url" => plugins_url( 'ipn.php', __FILE__ ),
-			"currency" => $data['currency']
-	    )
+			"currency" => $data['currency']	    
 	);
-
-	$opts = array('http' =>
-	    array(
-	        'method'  => 'POST',
-	        'header'  => 'Content-type: application/x-www-form-urlencoded',
-	        'content' => $postdata
-	    )
+	 
+	$args = array(
+	    'body' => $body,
+	    'timeout' => '5',
+	    'redirection' => '5',
+	    'httpversion' => '1.0',
+	    'blocking' => true,
+	    'headers' => array(),
+	    'cookies' => array()
 	);
-
-	$context  = stream_context_create($opts);
-	$response = file_get_contents('https://payiota.me/api.php', false, $context);
-	
-	//cURL fallback
-	if (!$response) {
-		
-		if(is_callable('curl_init') == false){
-			echo "ERROR: file_get_contents failed and cURL is not installed";
-			die(1);
-		}
-
-		$curl = curl_init();
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($curl,CURLOPT_POST, 1);
-		curl_setopt($curl,CURLOPT_POSTFIELDS, $postdata);
-		curl_setopt($curl, CURLOPT_URL, 'https://payiota.me/api.php');
-		$response = curl_exec($curl);
-		
-		if (!$response) {
-			echo "ERROR: file_get_contents and cURL failed";
-			die(1);
-		}
-	}
+	 
+	$response = wp_remote_post('https://payiota.me/api.php', $args);
+	$response = wp_remote_retrieve_body($response);
 
 	$response = json_decode($response, true);
 	return $response;
