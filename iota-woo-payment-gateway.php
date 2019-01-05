@@ -2,12 +2,12 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /* 
-Plugin Name: IOTA Payment Gateway Pro
-Plugin URI: http://cryptostore.trade
-Description: IOTA Payment Gateway Extension For WooCommerce Pro Version. Simple but flexible.
-Version: 1.0.1
+Plugin Name: PayIOTA.me IOTA Payment Gateway
+Plugin URI: https://payiota.me & http://cryptostore.trade
+Description: PayIOTA.me IOTA Payment Gateway Extension For WooCommerce Pro Version. Simple but flexible.
+Version: 2.0
 Author: Dan Darden & Laszlo Molnarfi
-Author URI: http://cryptostore.trade and https://lacicloud.net
+Author URI: https://github.com/lacicloud and http://cryptostore.trade
 */ 
 
 /*  Copyright 2017 Dan Darden (email: satoshin@protonmail.ch)
@@ -25,6 +25,23 @@ Author URI: http://cryptostore.trade and https://lacicloud.net
     You should have received a copy of the GNU General Public License
     along with this program; If not, see <http://www.gnu.org/licenses/>
 */
+
+/*  Copyright 2019 Laszlo Molnarfi (email: laci@lacicloud.net)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; If not, see <http://www.gnu.org/licenses/>
+*/
+
 
 add_action( 'plugins_loaded', 'payiota_init', 0 );
 
@@ -74,7 +91,7 @@ function payiota_add_content_thankyou($order_id) {
 	$title  = !empty( $title ) ? $title : "IOTA";
 
 	$ipn_url = $iota_obj->ipn_url;
-	
+
 	$customer_order = new WC_Order( $order_id );
 
 	if( !empty( $api_key ) ){
@@ -96,7 +113,8 @@ function payiota_add_content_thankyou($order_id) {
 				"api_key" => $api_key,
 				"price"   => $total_bill,
 				"currency" => $currency_code,
-				"order_id" => $customer_order->get_order_number()
+				"order_id" => $customer_order->get_order_number(),
+				"ipn_url" => $ipn_url
 			);
 
 			$result = payiota_invoice($data);
@@ -146,7 +164,7 @@ function payiota_invoice($data){
 			"price" => $data['price'],
 			"custom" => $data['order_id'],
 			"action" => "new",
-			"ipn_url" => plugins_url( 'ipn.php', __FILE__ ),
+			"ipn_url" => $data['ipn_url'],
 			"currency" => $data['currency']	    
 	);
 	 

@@ -16,7 +16,7 @@ class PayIOTA extends WC_Payment_Gateway {
 		$this->ipn_url   = add_query_arg( 'wc-api', 'PayIOTA', home_url( '/' ) );
 
 		//payment listener/hook
-		add_action( 'woocommerce_api_wc_gateway_payiota', array( $this, 'check_ipn_response' ) );
+		add_action( 'woocommerce_api_payiota', array( $this, 'check_ipn_response' ) );
 
 		// Show Title
 		$this->method_title = __( "PayIOTA.me IOTA Payment Gateway", 'payiota' );

@@ -22,7 +22,7 @@ class Iota_Class extends WC_Payment_Gateway {
 		
 		$this->description = $this->get_option( 'description' );
 
-		$this->ipn_url = $this->get_option('ipn_url');
+		$this->ipn_url =  add_query_arg( 'wc-api', 'PayIOTA', home_url( '/' ) );
 			
 	}
 }
